@@ -77,22 +77,58 @@ def get_End():
         print("Invalid date, please use YYYY-MM-DD format.")
         
 
+def get_ChartType():
+    global chartType
+    print("Select the type of chart you want to Generate ")
+    print("________________________________________________________________")
+    print("1. Line Chart")
+    print("2. Bar Chart")
+    print("3. Candlestick Chart")
 
+    userChartType = input("Enter chart type option (1, 2, 3): ")
+    if userChartType == "1":
+        chartType = "line"
+    elif userChartType == "2":
+        chartType = "bar"
+    elif userChartType == "3":
+        chartType = "candlestick"
+    else:
+        print(" ")
+        print("Please be sure to input 1, 2, or 3. Try again.")
+        print(" ")
+        get_ChartType()
 
+def generate_and_show_chart(data):
+    if chartType == "line":
+        x = list(data["Time Series (1min)"].keys())
+        y = [float(data["Time Series (1min)"][key]["1. open"]) for key in x]
+        
+        plt.plot(x, y)
+        plt.xlabel("Time")
+        plt.ylabel("Open Price")
+        plt.title("Stock Price Line Chart")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
 
-def main():
-    get_Symbol()
-    get_Time()
-    get_Start()
-    get_End()
-    getData()
-
+        chart_file = "stock_chart.png"
+        plt.savefig(chart_file)
+        
+        plt.show()
 
 def getData():
     url = 'https://www.alphavantage.co/query?function='+ timeSeries + '&symbol=' + userSymbol + '&interval=5min&apikey=' + key
     r = requests.get(url)
     data = r.json()
     print(data)
+    
+def main():
+    get_Symbol()
+    get_Time()
+    get_ChartType()
+    data = getData()
+    generate_and_show_chart(data)
 
 
-main()
+if __name__ == "__main__":
+    main()
+ 
